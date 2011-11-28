@@ -13,8 +13,6 @@ form = cgi.FieldStorage()
 user = form.getvalue("user","")
 user = cgi.escape(user)
 
-user = "dolljuliet"
-
 comments = {}
 
 def load_comments(json):
