@@ -13,6 +13,8 @@ form = cgi.FieldStorage()
 user = form.getvalue("user","")
 user = cgi.escape(user)
 
+user = "dolljuliet"
+
 comments = {}
 
 def load_comments(json):
@@ -22,7 +24,10 @@ def load_comments(json):
 		id = child['data']['id']
 		earliest = child['data']['created_utc']
 		comments[id] = {"ups":ups,"downs":downs,"date":earliest}
-	after = json['data']['after']
+	if json['data'].has_key('after'):
+		after = json['data']['after']
+	else:
+		after = ""
 	return(after,earliest)
 
 if len(user) > 0:
@@ -34,14 +39,14 @@ if len(user) > 0:
 		if len(after) == 0:
 			break
 		req = urllib.urlopen("http://www.reddit.com/user/%s/comments/.json?after=%s" % (user,after))
-		#print "http://www.reddit.com/user/%s/comments/.json?after=%s" % (user,after)
+		print "http://www.reddit.com/user/%s/comments/.json?after=%s" % (user,after)
 		try:
 			json = simplejson.loads(req.read())
 			after,earliest = load_comments(json)
+			if len(json['data']['children']) < 25:
+				break
 		except:
 			pass
-			#print "Something has gone wrong with %s" % (after)
-			#print req.read()
 	if len(comments) > 0:
 		ups = 0
 		downs = 0
