@@ -1,0 +1,89 @@
+<html>
+<head>
+<!--#include virtual="/assets/header.head" -->
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<script type="text/javascript">
+var current = 0;
+var keys = [];
+var images;
+var count = 0 ;
+function next() {
+	count++;
+	key = keys[current];
+	link = vsprintf("http://reddit.com/comments/%s/", [key.split("_")[1]]);
+	url = images[key]["url"];
+	title = images[key]["title"];
+	nsfw = images[key]["nsfw"];
+	current = Math.floor(Math.random()*keys.length);
+	console.log(nsfw);
+	if (nsfw != 1) {
+		$("#image").html(vsprintf("<img src='%s' height=700>", [url]));
+		$("#title").html(vsprintf("<a href='%s' target='_blank' style=\"text-decoration:none; color:#ffffff;\">%s</a>", [link,title]));
+		console.log(url);
+		console.log(current);
+		timeOut = setTimeout(function() { next(); }, 30000);
+		$("#image").click(function() { window.clearTimeout(timeOut) });
+		return(0);
+		}
+	else {
+		console.log(current);
+		next();
+		return(0);
+		}
+	}
+
+function set(data) {
+	images = data;
+	for (var key in images) {
+		keys[keys.length] = key;
+		}
+	next(images)
+	}
+
+function init() {
+	$('body').scrollTop(1);
+	load_json("http://thingist.com/labs/reddit_proxy.cgi");
+	}
+
+</script>
+<style type=text/css>
+body {
+background-color:#000000;
+}
+
+#image {
+position:relative;
+margin-left:auto;
+margin-right:auto;
+}
+
+#title_box {
+position:absolute;
+bottom:50px;
+right:50px;
+background-color:#000000;
+width:auto;
+max-width:400px;
+padding:10px;
+word-wrap:break-word;
+height:auto;
+border-radius:10px;
+-moz-border-radius:10px;
+opacity:0.7;
+}
+
+#title {
+font-family: 'Arvo';
+font-size:20px;
+color:#ffffff;
+opacity:1;
+}
+
+</style>
+</head>
+<body onload="init();">
+<center>
+<div id="image" onclick="next();"><img src="loading_bk.gif"></div>
+<div id="title_box"><div id="title"></div></div>
+</center>
+</html>
